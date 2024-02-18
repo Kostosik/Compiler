@@ -132,37 +132,37 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\add.png" />
+    <None Include="Resources\add.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\copy.png" />
+    <None Include="Resources\copy.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\cut.png" />
+    <None Include="Resources\cut.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\folder.png" />
+    <None Include="Resources\folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\info.png" />
+    <None Include="Resources\info.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\left-arrow.png" />
+    <None Include="Resources\left-arrow.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\paste.png" />
+    <None Include="Resources\paste.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\question-mark.png" />
+    <None Include="Resources\question-mark.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\right-arrow.png" />
+    <None Include="Resources\right-arrow.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\run.png" />
+    <None Include="Resources\run.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\pictures\save.png" />
+    <None Include="Resources\save.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
@@ -181,6 +181,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\флаганглии.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\pictures\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
