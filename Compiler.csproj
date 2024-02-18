@@ -67,6 +67,9 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="inputTabControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -78,6 +81,12 @@
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OutputTabControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OutputTabControl.Designer.cs">
+      <DependentUpon>OutputTabControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.ru.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OutputTabControl.resx">
+      <DependentUpon>OutputTabControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

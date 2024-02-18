@@ -6,12 +6,14 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Compiler
 {
     public partial class inputTabControl : UserControl
     {
+
         public inputTabControl()
         {
             InitializeComponent();
@@ -19,40 +21,16 @@ namespace Compiler
             this.addTabPage();
         }
 
-        internal class CustomTabPage:TabPage
+        public TabControl GetTab()
         {
-            public RichTextBox inputRichTextBox;
-            public RichTextBox linesRichTextBox;
-
-            public CustomTabPage(int index)
-            {
-                this.Resize += new System.EventHandler(this.myResize);
-                this.Text = index.ToString();
-
-
-                
-            }
-
-
-            public void myResize(object sender, EventArgs e)
-            {
-                inputRichTextBox = new RichTextBox();
-                inputRichTextBox.Size = new Size(this.Width - 30, this.Height);
-                inputRichTextBox.Location = new Point(20, 0);
-                inputRichTextBox.Parent = this;
-
-                linesRichTextBox = new RichTextBox();
-                linesRichTextBox.Size = new Size(20, this.Height);
-                linesRichTextBox.Location = new Point(0, 0);
-                linesRichTextBox.Parent = this;
-            }
+            return tabControl1 as TabControl;
         }
+
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(tabControl1.SelectedIndex == tabControl1.TabCount-1)
             {
-                MessageBox.Show("Last");
                 addTabPage();
             }
 
@@ -74,6 +52,39 @@ namespace Compiler
         private void tabControl1_Resize(object sender, EventArgs e)
         {
 
+        }
+
+        private void inputTabControl_Resize(object sender, EventArgs e)
+        {
+            tabControl1.Size = this.Size;
+        }
+
+        private void tabControl1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+        private void tabControl1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void tabControl1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0)
+            {
+                string filePath = files[0];
+                string fileContent = File.ReadAllText(filePath); ;
+                (tabControl1.TabPages[tabControl1.SelectedIndex] as CustomTabPage).inputRichTextBox.Text = fileContent;
+            }
         }
     }
 }

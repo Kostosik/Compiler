@@ -36,11 +36,10 @@ namespace Compiler
             }
         }
 
+
+
         bool isFileSaved = true;
         #endregion
-
-
-        //Интерфейс с вкладками, позволяющий одновременно работать с несколькими текстами (для окна редактирования).
 
         //Нумерация строк в окне редактирования текста.
 
@@ -50,18 +49,29 @@ namespace Compiler
 
         //Отображение ошибок в окне вывода результатов в виде таблицы.
 
-        inputTabControl inputTabControl;
+        inputTabControl inputTab;
 
         public MainForm()
         {
             InitializeComponent();
             this.Text = AssemblyTitle;
-            this.MainForm_Resize(null,null);
             
+            this.KeyPreview = true;
 
-            inputTabControl = new inputTabControl();
-            inputTabControl.Parent = this;
-            inputTabControl.BringToFront();
+            this.InputLanguageChanged += (sender, e) =>
+            {
+                languageKeyLabel.Text = string.Format("Язык ввода: {0}", InputLanguage.CurrentInputLanguage.LayoutName);
+            };
+            CapsLockLabel.Text = string.Format("Клавиша CapsLock: " + (Control.IsKeyLocked(Keys.CapsLock) ? "Нажата" : "Не нажата"));
+            languageKeyLabel.Text = string.Format("Язык ввода: {0}", InputLanguage.CurrentInputLanguage.LayoutName);
+
+            inputTab = new inputTabControl();
+            inputTab.Parent = this;
+            mainSplitContainer.Panel1.Controls.Add(inputTab);
+            inputTab.BringToFront();
+            inputTab.GetTab().SelectedIndex = 0;
+            inputTab.Size = new Size(mainSplitContainer.Width, mainSplitContainer.SplitterDistance);
+            this.MainForm_Resize(null, null);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -71,7 +81,19 @@ namespace Compiler
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Application.Exit();
+            TabControl tabControl = inputTab.GetTab();
+
+            for (int i = 0; i < tabControl.TabPages.Count; i++)
+            {
+                if ((tabControl.TabPages[i] as CustomTabPage).isFileSaved)
+                    continue;
+                else
+                {
+                    tabControl.SelectedIndex = i;
+                    if (showSaveMessageBox())
+                        return;
+                }
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -88,20 +110,9 @@ namespace Compiler
             }
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (keyData == (Keys.Control |  Keys.Oemplus))//oemminus
-            {
-                //doSomething();
-                return true;
-            }
-
-            if(keyData == (Keys.Control | Keys.OemMinus))
-            {
-                //doSomething();
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
+            CapsLockLabel.Text = string.Format("Клавиша CapsLock: " + (Control.IsKeyLocked(Keys.CapsLock) ? "Нажата" : "Не нажата"));
         }
 
         private bool showSaveMessageBox()
@@ -130,13 +141,14 @@ namespace Compiler
 
         private void createNewFile()
         {
-            if(!isFileSaved)
+            TabControl tabControl = inputTab.GetTab();
+            if (!((tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).isFileSaved))
             {
                 if (showSaveMessageBox())
                 return;
-            }    
-
-            inputRichTextBox.Text = null;
+            }
+            
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Clear();
         }
 
         #region ToolStrip Buttons
@@ -152,41 +164,40 @@ namespace Compiler
             this.Visible = false;
         }
 
-        private void оПрограммеToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AboutForm aboutForm = new AboutForm(this);
-            aboutForm.Show();
-            this.Visible = false;
-        }
-
         private void CopyButton_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Copy();
+            TabControl tabControl = inputTab.GetTab();
+            (inputTab.tabControl1.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Copy();
         }
 
         private void CutButton_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Cut();
+            TabControl tabControl = inputTab.GetTab();
+            (inputTab.tabControl1.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Cut();
         }
 
         private void InsertButton_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Paste();
+            TabControl tabControl = inputTab.GetTab();
+            (inputTab.tabControl1.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Paste();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Undo();
+            TabControl tabControl = inputTab.GetTab();
+            (inputTab.tabControl1.TabPages[inputTab.tabControl1.SelectedIndex] as CustomTabPage).Undo();
         }
 
         private void RepeatButton_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Redo();
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Redo();
         }
 
         private void OpenButton_Click(object sender, EventArgs e)
         {
-            if (!isFileSaved)
+            TabControl tabControl = inputTab.GetTab();
+            if (!((tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).isFileSaved))
             {
                 if(showSaveMessageBox())
                 return;
@@ -201,26 +212,31 @@ namespace Compiler
             saveFileDialog.ShowDialog();
         }
 
+        private void RunButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void HelpButton1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Область редактирования представляет текстовый редактор. Команды меню «Файл» и «Правка» работают с содержимым этой области. Формат сохранения файлов – на усмотрение разработчика. Дополнительное задание: реализовать подсветку синтаксиса (выделение ключевых слов другим цветом или полужирным шрифтом).");
+        }
+
         #endregion
 
         #region MenuStrip Buttons
         private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!isFileSaved)
-            {
-                if(showSaveMessageBox())
-                return;
-            }
-
             createNewFile();
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!isFileSaved)
+            TabControl tabControl = inputTab.GetTab();
+            if (!((tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).isFileSaved))
             {
-                if (showSaveMessageBox()) 
-                return;
+                if (showSaveMessageBox())
+                    return;
             }
 
             openFileDialog.ShowDialog();
@@ -228,7 +244,8 @@ namespace Compiler
 
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.SaveFile("", RichTextBoxStreamType.PlainText);
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.SaveFile("", RichTextBoxStreamType.PlainText);
         }
 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
@@ -238,10 +255,18 @@ namespace Compiler
 
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!isFileSaved)
+            TabControl tabControl = inputTab.GetTab();
+            
+            for(int i = 0;i<tabControl.TabPages.Count;i++)
             {
-                if (showSaveMessageBox()) 
-                return;
+                if((tabControl.TabPages[i] as CustomTabPage).isFileSaved)
+                    continue;
+                else
+                {
+                    tabControl.SelectedIndex = i;
+                    if (showSaveMessageBox())
+                        return;
+                }
             }
 
             Application.Exit();
@@ -249,59 +274,83 @@ namespace Compiler
 
         private void отменитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Undo();
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Undo();
         }
 
         private void повторитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Redo();
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Redo();
 
         }
 
         private void вырезатьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Cut();
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Cut();
         }
 
         private void копироватьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Copy();
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Copy();
         }
 
         private void вставитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.Paste();
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Paste();
         }
 
         private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.SelectedText = "";
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.SelectedText = "";
         }
 
         private void выделитьВсеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            inputRichTextBox.SelectAll();
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.SelectAll();
+        }
+
+        private void оПрограммеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutForm aboutForm = new AboutForm(this);
+            aboutForm.Show();
+            this.Visible = false;
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Область редактирования представляет текстовый редактор. Команды меню «Файл» и «Правка» работают с содержимым этой области. Формат сохранения файлов – на усмотрение разработчика. Дополнительное задание: реализовать подсветку синтаксиса (выделение ключевых слов другим цветом или полужирным шрифтом).");
         }
         #endregion
 
+        #region Работа с файлами
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            inputRichTextBox.LoadFile(openFileDialog.FileName, RichTextBoxStreamType.PlainText);
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.LoadFile(openFileDialog.FileName, RichTextBoxStreamType.PlainText);
         }
 
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            inputRichTextBox.SaveFile(saveFileDialog.FileName, RichTextBoxStreamType.PlainText);
+            TabControl tabControl = inputTab.GetTab();
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.SaveFile(saveFileDialog.FileName, RichTextBoxStreamType.PlainText);
             isFileSaved = true;
         }
+        #endregion
 
+        #region Resize functions
         private void resizeFunction()
         {
-            inputRichTextBox.Size = new Size(mainSplitContainer.Width-75, mainSplitContainer.SplitterDistance);
-            inputRichTextBox.Location = new Point(mainSplitContainer.Left + 52, mainSplitContainer.Panel1.Top);
-            outputRichTextBox.Size = new Size(mainSplitContainer.Width - 10, mainSplitContainer.Size.Height - inputRichTextBox.Size.Height - 10 - statusStrip1.Height);
-            lineCountRichTextBox.Size = new Size(60, inputRichTextBox.Size.Height);
-            inputTabControl1.Size = new Size(mainSplitContainer.Width, mainSplitContainer.SplitterDistance);
+            if (inputTab != null)
+            {
+                inputTab.Size = new Size(mainSplitContainer.Width, mainSplitContainer.SplitterDistance);
+            }
+            outputRichTextBox.Size = new Size(mainSplitContainer.Width - 10, mainSplitContainer.Size.Height - mainSplitContainer.Panel1.Size.Height - 10 - statusStrip1.Height);
         }
 
         private void mainSplitContainer_Resize(object sender, EventArgs e)
@@ -313,11 +362,9 @@ namespace Compiler
         {
             resizeFunction();
         }
+        #endregion
 
-        private void inputRichTextBox_TextChanged(object sender, EventArgs e)
-        {
-            isFileSaved = false;
-        }
+        #region Смена языка
 
         private void ChangeLanguage(string lang)
         {
@@ -336,7 +383,7 @@ namespace Compiler
                 if (!(item is ToolStripButton))
                     continue;
                 ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
-                resources.ApplyResources(item, (item as ToolStripButton).Name , new CultureInfo(lang));
+                resources.ApplyResources(item, (item as ToolStripButton).Name, new CultureInfo(lang));
             }
         }
 
@@ -355,225 +402,6 @@ namespace Compiler
             Properties.Settings.Default.language = "english";
             Properties.Settings.Default.Save();
         }
-
-        private void inputRichTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Enter)
-            {
-                lineCountRichTextBox.Text+="\n" +(lineCountRichTextBox.Lines.Length +1).ToString() + ".";
-            }
-
-        }
-
-        private void inputRichTextBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //if (e.KeyChar == (char)13)
-            //{
-            //    lineCountRichTextBox.Text += "\n" + (lineCountRichTextBox.Lines.Length + 1).ToString() + ".";
-            //}
-
-            if (e.KeyChar == (char)13)
-            {
-                lineCountRichTextBox.Text.Insert(0,(lineCountRichTextBox.Lines.Length + 1).ToString() + ".");
-                //RTF_Scroll(lineCountRichTextBox, null);
-            }
-
-        }
-
-        public class SynchronizedScrollRichTextBox : System.Windows.Forms.RichTextBox
-        {
-            public event vScrollEventHandler vScroll;
-            public delegate void vScrollEventHandler(System.Windows.Forms.Message message);
-
-            public const int WM_VSCROLL = 0x115;
-
-            protected override void WndProc(ref System.Windows.Forms.Message msg)
-            {
-                if (msg.Msg == WM_VSCROLL)
-                {
-                    if (vScroll != null)
-                    {
-                        vScroll(msg);
-                    }
-                }
-                base.WndProc(ref msg);
-            }
-
-            public void PubWndProc(ref System.Windows.Forms.Message msg)
-            {
-                base.WndProc(ref msg);
-            }
-        }
-
-        private void inputRichTextBox_vScroll(Message message)
-        {
-            message.HWnd = lineCountRichTextBox.Handle;
-            //lineCountRichTextBox.PubWndProc(ref message);
-        }
-
- 
-        #region MessageEventHandler
-
-        public class MessageEventArgs : EventArgs
-        {
-            /// <summary>
-            /// сообщение
-            /// </summary>
-            public Message Message { get; private set; }
-
-            /// <summary>
-            /// конструктор
-            /// </summary>
-            public MessageEventArgs()
-            {
-            }
-
-            /// <summary>
-            /// конструктор
-            /// </summary>
-            /// <param name="msg"> сообщение </param>
-            public MessageEventArgs(Message msg)
-            {
-                this.Message = msg;
-            }
-        }
-
-        public delegate void MessageEventHandler(object sender, MessageEventArgs e);
-
         #endregion
-
-        public class ImprovedRichTextBox : RichTextBox
-        {
-            #region WinAPI
-
-            private const int WM_HSCROLL = 276;
-            private const int WM_VSCROLL = 277;
-
-            private const int SB_HORZ = 0;
-            private const int SB_VERT = 1;
-
-            [DllImport("user32.dll")]
-            public static extern int SetScrollPos(IntPtr hWnd, int nBar, int nPos, bool bRedraw);
-
-            #endregion
-
-            #region Constructors
-
-            /// <summary>
-            /// конструктор
-            /// </summary>
-            public ImprovedRichTextBox()
-            {
-            }
-
-            #endregion
-
-            #region Events
-
-            public event MessageEventHandler Scroll;
-
-            #endregion
-
-            #region Protected methods
-
-            protected override void WndProc(ref Message m)
-            {
-                if (m.Msg == WM_HSCROLL || m.Msg == WM_VSCROLL)
-                {
-                    OnScroll(m);
-                }
-
-                base.WndProc(ref m);
-            }
-
-            /// <summary>
-            /// вызов события 'Scroll'
-            /// </summary>
-            /// <param name="m"></param>
-            protected virtual void OnScroll(Message m)
-            {
-                if (Scroll != null) Scroll(this, new MessageEventArgs(m));
-            }
-
-            #endregion
-            #region Public methods
-
-            /// <summary>
-            /// послать событие прокрутки
-            /// </summary>
-            /// <param name="m"></param>
-            public void SendScrollMessage(Message m)
-            {
-                base.WndProc(ref m);
-
-                // прокрутка
-                switch (m.Msg)
-                {
-                    case WM_HSCROLL:
-                        SetScrollPos(Handle, SB_HORZ, m.WParam.ToInt32() >> 16, true);
-                        break;
-                    case WM_VSCROLL:
-                        SetScrollPos(Handle, SB_VERT, m.WParam.ToInt32() >> 16, true);
-                        break;
-                }
-            }
-
-            #endregion
-        }
-        #region Scrolling
-
-        private bool isScrolling = false;       // признак прокрутки контрола
-
-        /// <summary>
-        /// прокрутка
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RTF_Scroll(object sender, MessageEventArgs e)
-        {
-            if (!isScrolling)
-            {
-                isScrolling = true;
-
-                ImprovedRichTextBox senderRtf = sender as ImprovedRichTextBox;
-                ImprovedRichTextBox rtf = senderRtf == inputRichTextBox ? lineCountRichTextBox : inputRichTextBox;
-
-                Message m = e.Message;
-                m.HWnd = rtf.Handle;
-                rtf.SendScrollMessage(m);
-
-                isScrolling = false;
-            }
-        }
-
-        #endregion
-
-        private void MainForm_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (files.Length > 0)
-            {
-                string filePath = files[0]; // Первый перетащенный файл
-                // Далее можно выполнить необходимые операции с файлом
-                // Например, открыть его или прочитать его содержимое
-                string fileContent = File.ReadAllText(filePath); ;
-                inputRichTextBox.Text = fileContent;
-                // В этом примере мы просто выводим путь к файлу в MessageBox
-                //MessageBox.Show(filePath, "Перетащенный файл");
-            }
-        }
-
-        private void MainForm_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effect= DragDropEffects.None;
-            }
-        }
     }
-
 }

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанных со сборкой.
 [assembly: AssemblyTitle("Visual Studio 10000")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Область редактирования представляет текстовый редактор. Команды меню «Файл» и «Правка» работают с содержимым этой области. Формат сохранения файлов – на усмотрение разработчика. Дополнительное задание: реализовать подсветку синтаксиса (выделение ключевых слов другим цветом или полужирным шрифтом).\r\n\r\n")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Compiler")]

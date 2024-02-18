@@ -33,12 +33,16 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.AllowDrop = true;
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(528, 431);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+            this.tabControl1.DragDrop += new System.Windows.Forms.DragEventHandler(this.tabControl1_DragDrop);
+            this.tabControl1.DragEnter += new System.Windows.Forms.DragEventHandler(this.tabControl1_DragEnter);
+            this.tabControl1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tabControl1_KeyPress);
             this.tabControl1.Resize += new System.EventHandler(this.tabControl1_Resize);
             // 
             // inputTabControl
@@ -48,12 +52,13 @@
             this.Controls.Add(this.tabControl1);
             this.Name = "inputTabControl";
             this.Size = new System.Drawing.Size(531, 437);
+            this.Resize += new System.EventHandler(this.inputTabControl_Resize);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControl1;
+        public System.Windows.Forms.TabControl tabControl1;
     }
 }
