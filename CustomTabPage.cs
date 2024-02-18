@@ -24,12 +24,15 @@ namespace Compiler
             isFileSaved = true;
 
             inputRichTextBox = new ImprovedRichTextBox();
-            linesRichTextBox = new ImprovedRichTextBox();
-            inputRichTextBox.Parent = this;
-            linesRichTextBox.Parent = this;
-            linesRichTextBox.Text = 1.ToString();
             inputRichTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.newLineKey);
             inputRichTextBox.TextChanged += new System.EventHandler(textChanged);
+            inputRichTextBox.Parent = this;
+            inputRichTextBox.WordWrap = false;
+
+            linesRichTextBox = new ImprovedRichTextBox();
+            linesRichTextBox.Parent = this;
+            linesRichTextBox.Text = 1.ToString();
+            linesRichTextBox.ReadOnly = true;
         }
 
         public void newLineKey(object sender, KeyPressEventArgs e)
