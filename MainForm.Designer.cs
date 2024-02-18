@@ -32,8 +32,9 @@ namespace Compiler
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.lineCountRichTextBox = new Compiler.MainForm.ImprovedRichTextBox();
-            this.inputRichTextBox = new Compiler.MainForm.ImprovedRichTextBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.CapsLockLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.languageKeyLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.outputRichTextBox = new System.Windows.Forms.RichTextBox();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,18 +84,12 @@ namespace Compiler
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.inputTabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
-            this.mainSplitContainer.Panel1.SuspendLayout();
             this.mainSplitContainer.Panel2.SuspendLayout();
             this.mainSplitContainer.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.mainMenu.SuspendLayout();
             this.toolStrip.SuspendLayout();
-            this.inputTabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainSplitContainer
@@ -104,7 +99,6 @@ namespace Compiler
             // 
             // mainSplitContainer.Panel1
             // 
-            this.mainSplitContainer.Panel1.Controls.Add(this.inputTabControl1);
             resources.ApplyResources(this.mainSplitContainer.Panel1, "mainSplitContainer.Panel1");
             // 
             // mainSplitContainer.Panel2
@@ -115,19 +109,24 @@ namespace Compiler
             this.mainSplitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.mainSplitContainer_SplitterMoved);
             this.mainSplitContainer.Resize += new System.EventHandler(this.mainSplitContainer_Resize);
             // 
-            // lineCountRichTextBox
+            // statusStrip1
             // 
-            resources.ApplyResources(this.lineCountRichTextBox, "lineCountRichTextBox");
-            this.lineCountRichTextBox.Name = "lineCountRichTextBox";
-            this.lineCountRichTextBox.ReadOnly = true;
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CapsLockLabel,
+            this.languageKeyLabel});
+            resources.ApplyResources(this.statusStrip1, "statusStrip1");
+            this.statusStrip1.Name = "statusStrip1";
             // 
-            // inputRichTextBox
+            // CapsLockLabel
             // 
-            resources.ApplyResources(this.inputRichTextBox, "inputRichTextBox");
-            this.inputRichTextBox.Name = "inputRichTextBox";
-            this.inputRichTextBox.TextChanged += new System.EventHandler(this.inputRichTextBox_TextChanged);
-            this.inputRichTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.inputRichTextBox_KeyPress);
-            this.inputRichTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.inputRichTextBox_KeyUp);
+            this.CapsLockLabel.Name = "CapsLockLabel";
+            resources.ApplyResources(this.CapsLockLabel, "CapsLockLabel");
+            // 
+            // languageKeyLabel
+            // 
+            this.languageKeyLabel.Name = "languageKeyLabel";
+            resources.ApplyResources(this.languageKeyLabel, "languageKeyLabel");
             // 
             // outputRichTextBox
             // 
@@ -314,6 +313,7 @@ namespace Compiler
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
+            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -429,6 +429,7 @@ namespace Compiler
             this.RunButton.Image = global::Compiler.Properties.Resources.run;
             resources.ApplyResources(this.RunButton, "RunButton");
             this.RunButton.Name = "RunButton";
+            this.RunButton.Click += new System.EventHandler(this.RunButton_Click);
             // 
             // HelpButton1
             // 
@@ -436,6 +437,7 @@ namespace Compiler
             this.HelpButton1.Image = global::Compiler.Properties.Resources.question_mark;
             this.HelpButton1.Name = "HelpButton1";
             resources.ApplyResources(this.HelpButton1, "HelpButton1");
+            this.HelpButton1.Click += new System.EventHandler(this.HelpButton1_Click);
             // 
             // AboutButton
             // 
@@ -477,34 +479,6 @@ namespace Compiler
             this.saveFileDialog.DefaultExt = "txt";
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
-            // statusStrip1
-            // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            resources.ApplyResources(this.statusStrip1, "statusStrip1");
-            this.statusStrip1.Name = "statusStrip1";
-            // 
-            // inputTabControl1
-            // 
-            this.inputTabControl1.Controls.Add(this.tabPage1);
-            this.inputTabControl1.Controls.Add(this.tabPage2);
-            resources.ApplyResources(this.inputTabControl1, "inputTabControl1");
-            this.inputTabControl1.Name = "inputTabControl1";
-            this.inputTabControl1.SelectedIndex = 0;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.inputRichTextBox);
-            this.tabPage1.Controls.Add(this.lineCountRichTextBox);
-            resources.ApplyResources(this.tabPage1, "tabPage1");
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            resources.ApplyResources(this.tabPage2, "tabPage2");
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -517,20 +491,18 @@ namespace Compiler
             this.Name = "MainForm";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
-            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
-            this.mainSplitContainer.Panel1.ResumeLayout(false);
             this.mainSplitContainer.Panel2.ResumeLayout(false);
             this.mainSplitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
             this.mainSplitContainer.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.mainMenu.ResumeLayout(false);
             this.mainMenu.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            this.inputTabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -590,14 +562,9 @@ namespace Compiler
         private System.Windows.Forms.ToolStripSplitButton languageToolStripSplitButton;
         private System.Windows.Forms.ToolStripMenuItem russianToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
-        //private System.Windows.Forms.RichTextBox lineCountRichTextBox;
-        //private SynchronizedScrollRichTextBox lineCountRichTextBox;
-        private ImprovedRichTextBox lineCountRichTextBox;
-        private ImprovedRichTextBox inputRichTextBox;
         private StatusStrip statusStrip1;
-        private TabControl inputTabControl1;
-        private TabPage tabPage1;
-        private TabPage tabPage2;
+        private ToolStripStatusLabel CapsLockLabel;
+        private ToolStripStatusLabel languageKeyLabel;
     }
 }
 
