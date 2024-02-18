@@ -36,9 +36,7 @@ namespace Compiler
             }
         }
 
-
-
-        bool isFileSaved = true;
+        inputTabControl inputTab;
         #endregion
 
         //Нумерация строк в окне редактирования текста.
@@ -48,8 +46,6 @@ namespace Compiler
         //Интерфейс с вкладками, позволяющий работать с разными модулями программы (для окна вывода результатов)
 
         //Отображение ошибок в окне вывода результатов в виде таблицы.
-
-        inputTabControl inputTab;
 
         public MainForm()
         {
