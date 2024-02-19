@@ -35,13 +35,30 @@ namespace Compiler
             linesRichTextBox.ReadOnly = true;
         }
 
+        private List<string> addedLines = new List<string>();
+
         public void newLineKey(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)13)
             {
-                linesRichTextBox.Text += "\n" + (linesRichTextBox.Lines.Length + 1).ToString();
+                string newLine = "\n" + (linesRichTextBox.Lines.Length + 1).ToString();
+                linesRichTextBox.Text += newLine;
+                addedLines.Add(newLine);
+            }
+
+            if (e.KeyChar == (char)8 && addedLines.Count > 0)
+            {
+                string lastAddedLine = addedLines[addedLines.Count - 1];
+                int lastIndex = linesRichTextBox.Text.LastIndexOf(lastAddedLine);
+
+                if (lastIndex != -1)
+                {
+                    linesRichTextBox.Text = linesRichTextBox.Text.Remove(lastIndex, lastAddedLine.Length);
+                    addedLines.RemoveAt(addedLines.Count - 1);
+                }
             }
         }
+
 
         public void textChanged(object sender, EventArgs e)
         {

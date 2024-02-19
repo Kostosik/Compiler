@@ -335,7 +335,7 @@ namespace Compiler
         {
             TabControl tabControl = inputTab.GetTab();
             (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.SaveFile(saveFileDialog.FileName, RichTextBoxStreamType.PlainText);
-            isFileSaved = true;
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).isFileSaved = true;
         }
         #endregion
 
