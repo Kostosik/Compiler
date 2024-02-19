@@ -75,7 +75,7 @@ namespace Compiler
             mainSplitContainer.Size = new Size(this.Size.Width - 40, this.Height - 130);
         }
 
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             TabControl tabControl = inputTab.GetTab();
 
@@ -87,7 +87,10 @@ namespace Compiler
                 {
                     tabControl.SelectedIndex = i;
                     if (showSaveMessageBox())
+                    {
+                        e.Cancel = true;
                         return;
+                    }
                 }
             }
         }
@@ -399,5 +402,7 @@ namespace Compiler
             Properties.Settings.Default.Save();
         }
         #endregion
+
+
     }
 }
