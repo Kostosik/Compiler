@@ -29,5 +29,5 @@ const double b = 1;
 ![alt text](lexer_diagram.png)
 
 ## Тестовые примеры
-![alt text](image-3.PNG)
-![alt text](image-4.PNG)
+![alt text](image-3.png)
+![alt text](image-4.png)
