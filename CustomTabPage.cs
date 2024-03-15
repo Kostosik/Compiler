@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Compiler.MainForm;
@@ -16,6 +17,8 @@ namespace Compiler
         public ImprovedRichTextBox linesRichTextBox;
         public bool isFileSaved;
 
+        string lexemes = @"\b(int|char|string)";
+
         public CustomTabPage(int index)
         {
             this.Resize += new System.EventHandler(this.myResize);
@@ -24,8 +27,8 @@ namespace Compiler
             isFileSaved = true;
 
             inputRichTextBox = new ImprovedRichTextBox();
-            inputRichTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.newLineKey);
-            inputRichTextBox.TextChanged += new System.EventHandler(textChanged);
+            //inputRichTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.newLineKey);
+            //inputRichTextBox.TextChanged += new System.EventHandler(textChanged);
             inputRichTextBox.Parent = this;
             inputRichTextBox.WordWrap = false;
 
@@ -63,6 +66,17 @@ namespace Compiler
         public void textChanged(object sender, EventArgs e)
         {
             this.isFileSaved = false;
+            MatchCollection lexeme_matches = Regex.Matches((sender as ImprovedRichTextBox).Text, lexemes);
+
+            //.Text = Lexer.lexText(richTextBox1.Text);
+
+            //richTextBox2.Focus();
+            //foreach (Match match in lexeme_matches)
+            //{
+            //    richTextBox1.SelectionStart = match.Index;
+            //    richTextBox1.SelectionLength = match.Length;
+            //    richTextBox1.SelectionColor = Color.Red;
+            //}
         }
 
         public void Redo()

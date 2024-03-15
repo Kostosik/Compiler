@@ -10,8 +10,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Compiler.CustomTabPage;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Compiler
@@ -39,7 +41,7 @@ namespace Compiler
         inputTabControl inputTab;
         #endregion
 
-        //Нумерация строк в окне редактирования текста.
+        
 
         //Базовая подсветка синтаксиса в окне редактирования.
 
@@ -66,6 +68,7 @@ namespace Compiler
             mainSplitContainer.Panel1.Controls.Add(inputTab);
             inputTab.BringToFront();
             inputTab.GetTab().SelectedIndex = 0;
+            (inputTab.GetTab().TabPages[0] as CustomTabPage).inputRichTextBox.TextChanged += new System.EventHandler(textChanged);
             inputTab.Size = new Size(mainSplitContainer.Width, mainSplitContainer.SplitterDistance);
             this.MainForm_Resize(null, null);
         }
@@ -146,7 +149,7 @@ namespace Compiler
                 if (showSaveMessageBox())
                 return;
             }
-            
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.TextChanged += new System.EventHandler(textChanged);
             (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.Clear();
         }
 
@@ -244,7 +247,8 @@ namespace Compiler
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TabControl tabControl = inputTab.GetTab();
-            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.SaveFile("", RichTextBoxStreamType.PlainText);
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).inputRichTextBox.SaveFile((tabControl.SelectedIndex.ToString()+".txt"), RichTextBoxStreamType.PlainText);
+            (tabControl.TabPages[tabControl.SelectedIndex] as CustomTabPage).isFileSaved = true;
         }
 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
@@ -403,6 +407,49 @@ namespace Compiler
         }
         #endregion
 
+        string lexemes = @"\b(const|double|Real)";
+        public void textChanged(object sender, EventArgs e)
+        {
+            ImprovedRichTextBox localTempTextBox = (sender as ImprovedRichTextBox);
+            (localTempTextBox.Parent as CustomTabPage).isFileSaved = false;
 
+            int st = localTempTextBox.SelectionStart;
+            int end = localTempTextBox.SelectionLength;
+            Color orig = Color.Black;
+
+            MatchCollection lexeme_matches = Regex.Matches(localTempTextBox.Text, lexemes);
+
+            localTempTextBox.SelectionStart = 0;
+            localTempTextBox.SelectionLength = localTempTextBox.Text.Length;
+            localTempTextBox.SelectionColor = orig;
+
+            outputRichTextBox.Text = Lexer.lexText(localTempTextBox.Text);
+
+            outputRichTextBox.Focus();
+            foreach (Match match in lexeme_matches)
+            {
+                localTempTextBox.SelectionStart = match.Index;
+                localTempTextBox.SelectionLength = match.Length;
+                localTempTextBox.SelectionColor = Color.Green;
+            }
+
+            localTempTextBox.Focus();
+            localTempTextBox.SelectionStart = st;
+            localTempTextBox.SelectionLength = end;
+            localTempTextBox.SelectionColor = orig;
+
+            string[] splittedLines = localTempTextBox.Text.Split(new string[] { "\r", "\n", "\r\n" }
+, StringSplitOptions.None);
+            int linecount = splittedLines.Length;
+
+            if (linecount != 0)
+            {
+                (localTempTextBox.Parent as CustomTabPage).linesRichTextBox.Clear();
+                for (int i = 1; i < linecount + 1; i++)
+                {
+                    (localTempTextBox.Parent as CustomTabPage).linesRichTextBox.AppendText(Convert.ToString(i) + "\n");
+                }
+            }
+        }
     }
 }

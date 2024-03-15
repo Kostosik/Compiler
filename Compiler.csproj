@@ -76,6 +76,7 @@
     <Compile Include="inputTabControl.Designer.cs">
       <DependentUpon>inputTabControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Lexer.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
