@@ -22,8 +22,8 @@
 
 ## Примеры допустимых строк
 ```
-const double a = 1,01;
-const double b = 1;
+final double a = 1,01;
+final double b = 1;
 ```
 ## Диаграмма состояний сканера
 ![alt text](lexer_diagram.png)

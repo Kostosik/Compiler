@@ -407,7 +407,7 @@ namespace Compiler
         }
         #endregion
 
-        string lexemes = @"\b(const|double|Real)";
+        string lexemes = @"\b(const|double|final)";
         public void textChanged(object sender, EventArgs e)
         {
             ImprovedRichTextBox localTempTextBox = (sender as ImprovedRichTextBox);

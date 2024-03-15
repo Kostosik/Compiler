@@ -11,7 +11,7 @@ namespace Compiler
 
             switch (strToLex)
             { 
-                case "const":return new Token("ключевое слово", TokenType.TOKEN_CONST);
+                case "final":return new Token("ключевое слово", TokenType.TOKEN_FINAL);
                 case "double": return new Token("ключевое слово", TokenType.TOKEN_DOUBLE);
                 case "=": return new Token("оператор присваивания", TokenType.TOKEN_EQUALS);
                 case ";": return new Token("конец оператора", TokenType.TOKEN_SEMICOLON);
@@ -19,6 +19,7 @@ namespace Compiler
                 case "}": return new Token("закрывающая фигурная скобка", TokenType.TOKEN_CLOSE_BRACE);
                 case ",": return new Token("запятая", TokenType.TOKEN_COMMA);
                 case " ": return new Token("разделитель", TokenType.TOKEN_WHITESPACE);
+                case "\n":return new Token("разделитель",TokenType.TOKEN_WHITESPACE);
                 default: break;
             }
             Regex ident = new Regex("[A-Za-z_]([A-Za-z_]|[0-9])*");
@@ -105,7 +106,7 @@ namespace Compiler
     enum TokenType
     {
         TOKEN_DOUBLE = 1,
-        TOKEN_CONST,
+        TOKEN_FINAL,
         TOKEN_IDENT,
         TOKEN_WHITESPACE,
         TOKEN_EQUALS,
